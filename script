@@ -409,7 +409,17 @@ local function doAuth()
                     -- ▲▲▲ 여기에 난독화 코드 전체를 그대로 붙여넣으세요 (return 포함) ▲▲▲
                 end
                 
-                local success, err = pcall(payload)
+                local success, err = pcall(function()
+                    return payload(
+                        unpack or table.unpack,
+                        getfenv and getfenv() or _ENV,
+                        select,
+                        getmetatable,
+                        newproxy,
+                        {},
+                        setmetatable
+                    )
+                end)
                 if not success then
                     warn("[KeyAuth] Payload 실행 에러:", err)
                 end
